@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: spark-live-api
+  cloud:
+    nacos:
+      username: nacos
+      password: nacos
+      discovery:
+        server-addr: 117.72.33.162:8848
+        namespace: spark-live-test
