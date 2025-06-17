@@ -1,41 +1,46 @@
 dataSources:
-  user: ## 物理数据源 “user”，用于实际的 JDBC 连接
-    dataSourceClassName: com.zaxxer.hikari.HikariDataSource  # 使用 HikariCP 连接池
-    driver-class-name: com.mysql.cj.jdbc.Driver             # MySQL 驱动
-    # JDBC URL 包含字符集设置，指向 spark_live_user 数据库
-    jdbcUrl: jdbc:mysql://117.72.33.162:3306/spark_live_user?useUnicode=true&characterEncoding=utf8
-    username: root          # 数据库用户名
-    password: mysql_1120    # 数据库密码
+  user_master: ##新表，重建的分表  # 这个注释说明这个数据源是主库，用于写操作
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource  # 使用HikariCP连接池
+    driver-class-name: com.mysql.cj.jdbc.Driver  # MySQL JDBC驱动
+    jdbcUrl: jdbc:mysql://117.72.33.162:8808/spark_live_user?useUnicode=true&characterEncoding=utf8  # 主库的数据库连接URL
+    username: root  # 数据库用户名
+    password: mysql_1120  # 数据库密码
 
-    # HikariCP 池配置
-    idle-timeout: 5         # 最大空闲时间，单位：分钟，超过则回收连接
-    minimum-idle: 100       # 最小空闲连接数，保证在低负载时仍保留一定数量的连接
-    pool-name: spark-db-user# 池名称，便于监控区分
-    maximum-pool-size: 1000 # 最大连接数上限
-    connection-timeout: 30000   # 获取连接的超时时间，单位：毫秒
-    connection-init-sql: SELECT 1   # 连接初始化执行的 SQL，用于检查连通性
-    connection-test-query: SELECT 1 # 测试连接可用性的 SQL
+  user_slave0: ##新表，重建的分表  # 这个注释说明这个数据源是从库，用于读操作
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource  # 使用HikariCP连接池
+    driver-class-name: com.mysql.cj.jdbc.Driver  # MySQL JDBC驱动
+    jdbcUrl: jdbc:mysql://117.72.33.162:8809/spark_live_user?useUnicode=true&characterEncoding=utf8  # 从库的数据库连接URL
+    username: root  # 数据库用户名
+    password: mysql_1120  # 数据库密码
 
 rules:
-  - !SINGLE
-    defaultDataSource: user        # 非分库分表场景下，使用的默认数据源
+  - !READWRITE_SPLITTING  # 定义读写分离规则
+    dataSources:
+      user_ds: # 定义了一个逻辑数据源 user_ds
+        staticStrategy: # 使用静态策略进行读写分离
+          writeDataSourceName: user_master  # 写操作使用 user_master 数据源
+          readDataSourceNames:
+            - user_slave0  # 读操作使用 user_slave0 数据源
 
-  - !SHARDING
+  - !SINGLE  # 定义单数据源规则
+    defaultDataSource: user_ds  # 设置默认数据源为 user_ds，即不分表分库时使用这个数据源
+
+  - !SHARDING  # 定义分库分表规则
     tables:
-      t_user:
-        # 实际物理节点，0～99 共 100 张分表，命名为 t_user_00 ... t_user_99
-        actualDataNodes: user.t_user_${(0..99).collect(){ it.toString().padLeft(2,'0') }}
+      t_user: # 对表 t_user 进行分表
+        actualDataNodes: user_ds.t_user_${(0..99).collect() {it.toString().padLeft(2,'0')}}  # 定义分表的实际数据节点
+        # 例如，生成 t_user_00, t_user_01, ..., t_user_99 等分表
         tableStrategy:
           standard:
-            shardingColumn: user_id      # 分片键，按 user_id 取模
-            shardingAlgorithmName: t_user-inline
+            shardingColumn: user_id  # 分表键，根据 user_id 进行分表
+            shardingAlgorithmName: t_user-inline  # 使用 t_user-inline 分表算法
 
     shardingAlgorithms:
-      t_user-inline:
-        type: INLINE                   # 内联算法
+      t_user-inline: # 定义分表算法
+        type: INLINE  # 使用内联表达式算法
         props:
-          # 算法表达式：user_id % 100，然后左侧补齐两位数字
-          algorithm-expression: t_user_${(user_id % 100).toString().padLeft(2,'0')}
+          algorithm-expression: t_user_${(user_id % 100).toString().padLeft(2,'0')}  # 分表表达式
+          # 例如，user_id=100 时，分到 t_user_00；user_id=101 时，分到 t_user_01，依此类推
 
 props:
-  sql-show: true  # 打印执行的 SQL 到控制台，便于排查分片后的实际 SQL
+  sql-show: true  # 是否显示执行的SQL语句，默认为false。设置为true时，会打印SQL语句，便于调试
