@@ -8,9 +8,19 @@ spring:
       pool-name: spark-user-pool
       minimum-idle: 150
       maximum-pool-size: 300
-#      connection-init-sql: select 1
+      #      connection-init-sql: select 1
       connection-timeout: 4000
       max-lifetime: 60000
+  data:
+    redis:
+      port: 16379
+      host: 117.72.33.162
+      password: redis_1120
+      lettuce:
+        pool:
+          min-idle: 10
+          max-active: 50
+          max-idle: 20
 
 dubbo:
   application:

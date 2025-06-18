@@ -6,3 +6,9 @@ spring:
       discovery:
         server-addr: 117.72.33.162:8848
         namespace: spark-live-test
+dubbo:
+  application:
+    name: ${spring.application.name}
+    qos-enable: false
+  registry:
+    address: nacos://117.72.33.162:8848?namespace=spark-live-test

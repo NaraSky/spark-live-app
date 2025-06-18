@@ -10,6 +10,11 @@
     </parent>
 
     <artifactId>spark-live-framework</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>spark--live-framework-redis-starter</module>
+        <module>spark-live-framework-datasource-starter</module>
+    </modules>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

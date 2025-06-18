@@ -9,8 +9,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>spark-live-framework-datasource-starter</artifactId>
-    <description>提前初始化MySQL连接池</description>
+    <artifactId>spark--live-framework-redis-starter</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -21,13 +20,26 @@
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot</artifactId>
-            <scope>provided</scope>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <scope>provided</scope>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>log4j-to-slf4j</artifactId>
+                    <groupId>org.apache.logging.log4j</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
