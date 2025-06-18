@@ -14,6 +14,8 @@
         <module>spark-live-user-provider</module>
         <module>spark-live-api</module>
         <module>spark-live-common-interfaces</module>
+        <module>spark-live-framework</module>
+        <module>spark-live-framework/spark-live-framework-datasource-starter</module>
     </modules>
 
     <properties>

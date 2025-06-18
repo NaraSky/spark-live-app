@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: spark-live-user-provider
   datasource:
     driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
     url: jdbc:shardingsphere:classpath:spark-db-sharding.yml
@@ -6,6 +8,15 @@ spring:
       pool-name: spark-user-pool
       minimum-idle: 150
       maximum-pool-size: 300
-      connection-init-sql: select 1
+#      connection-init-sql: select 1
       connection-timeout: 4000
       max-lifetime: 60000
+
+dubbo:
+  application:
+    name: ${spring.application.name}
+  registry:
+    address: nacos://117.72.33.162:8848?namespace=spark-live-test
+  protocol:
+    name: dubbo
+    port: 9091

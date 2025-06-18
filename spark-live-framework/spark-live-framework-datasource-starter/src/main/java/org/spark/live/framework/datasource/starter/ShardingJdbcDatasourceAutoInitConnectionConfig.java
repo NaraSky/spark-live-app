@@ -1,4 +1,4 @@
-package org.spark.live.user.provider.config;
+package org.spark.live.framework.datasource.starter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
