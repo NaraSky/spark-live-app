@@ -12,7 +12,7 @@
     <artifactId>spark-live-framework</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>spark--live-framework-redis-starter</module>
+        <module>spark-live-framework-redis-starter</module>
         <module>spark-live-framework-datasource-starter</module>
     </modules>
 

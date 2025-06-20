@@ -6,6 +6,9 @@ import org.spark.live.user.dto.UserDTO;
 import org.spark.live.user.interfaces.IUserRpc;
 import org.spark.live.user.provider.service.IUserService;
 
+import java.util.List;
+import java.util.Map;
+
 @DubboService
 public class UserRpcImpl implements IUserRpc {
 
@@ -25,5 +28,10 @@ public class UserRpcImpl implements IUserRpc {
     @Override
     public boolean insertOne(UserDTO userDTO) {
         return userService.insertOne(userDTO);
+    }
+
+    @Override
+    public Map<Long, UserDTO> batchQueryUserInfo(List<Long> userIdList) {
+        return userService.batchQueryUserInfo(userIdList);
     }
 }

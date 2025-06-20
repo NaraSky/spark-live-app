@@ -9,7 +9,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>spark--live-framework-redis-starter</artifactId>
+    <artifactId>spark-live-framework-redis-starter</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
